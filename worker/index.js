@@ -102,9 +102,13 @@ export default {
             // I'll skip actual count-tracking without KV config. 
 
             // 9. Forward to Power Automate
-            // PA_WEBHOOK_URL
             if (!env.PA_WEBHOOK_URL) {
-                throw new Error("Server configuration error: Missing PA webhook URL");
+                // PA not configured yet — log payload for debugging and return success
+                console.log("PA_WEBHOOK_URL not set. Payload received (not forwarded):", JSON.stringify(body));
+                return new Response(JSON.stringify({ ok: true, note: "PA not configured — data logged only" }), {
+                    status: 200,
+                    headers: { ...responseCorsHeaders, "Content-Type": "application/json" }
+                });
             }
 
             const paResponse = await fetch(env.PA_WEBHOOK_URL, {
@@ -114,8 +118,7 @@ export default {
             });
 
             if (!paResponse.ok) {
-                // Log text for debugging (dashboard logs)
-                console.error("PA Error:", await paResponse.text());
+                console.error("PA Error:", paResponse.status, await paResponse.text());
                 throw new Error("Upstream error");
             }
 
