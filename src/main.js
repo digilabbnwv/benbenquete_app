@@ -1,7 +1,7 @@
 import './style.css';
 
 // --- Configuration & State ---
-const CONFIG_URL = '/config/boekjes-en-babbels.v1.json';
+const CONFIG_URL = `${import.meta.env.BASE_URL}config/boekjes-en-babbels.v1.json`;
 const STORAGE_KEY = 'beb_survey_v1';
 const MOCK_MODE = import.meta.env.VITE_MOCK_MODE === 'true';
 const API_URL = import.meta.env.VITE_API_BASE_URL || '/api/submit';
