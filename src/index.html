@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#CAF0F8" />
+    <title>Boekjes & Babbels Enquête</title>
+    <meta name="description" content="Jouw mening telt! Vul de korte enquête in voor Boekjes & Babbels." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#CAF0F8] text-[#03045E] font-sans antialiased overflow-x-hidden min-h-screen relative selection:bg-[#FF006E] selection:text-white">
+    
+    <!-- Decorative background elements -->
+    <div class="fixed top-0 left-0 w-64 h-64 bg-[#90E0EF] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+    <div class="fixed top-0 right-0 w-64 h-64 bg-[#ADE8F4] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+    <div class="fixed -bottom-32 left-20 w-80 h-80 bg-[#48CAE4] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+
+    <main id="app" class="relative z-10 w-full max-w-lg mx-auto flex flex-col min-h-screen p-4 pb-24">
+      <!-- Content will be injected here -->
+      <div class="flex-grow flex items-center justify-center">
+        <div class="animate-pulse flex space-x-4">
+          <div class="rounded-full bg-white h-12 w-12"></div>
+          <div class="flex-1 space-y-4 py-1">
+            <div class="h-4 bg-white rounded w-3/4"></div>
+            <div class="space-y-2">
+              <div class="h-4 bg-white rounded"></div>
+              <div class="h-4 bg-white rounded w-5/6"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 w-full p-6 text-center z-0 pointer-events-none">
+       <!-- Logo placeholder -->
+       <div class="inline-block opacity-80">
+         <img src="/logo-placeholder.png" alt="Boekjes & Babbels" class="h-12 w-auto object-contain mx-auto" onerror="this.style.display='none'; this.parentElement.innerText='Boekjes & Babbels'" />
+       </div>
+    </footer>
+
+    <div id="error-toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-lg z-50 hidden transition-all duration-300">
+      <span id="error-msg">Er is iets misgegaan.</span>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/style.css"></script>
+  </body>
+</html>

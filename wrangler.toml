@@ -1,0 +1,13 @@
+[site]
+bucket = "./dist"
+
+[vars]
+CLIENT_SECRET = "REPLACE_WITH_REAL_SECRET"
+TOKEN_ALLOWLIST = "beb-global-2026"
+PA_WEBHOOK_URL = "REPLACE_WITH_REAL_PA_URL"
+
+name = "bnwv-boekjes-en-babbels-enquete-worker"
+main = "worker/index.js"
+compatibility_date = "2024-02-14"
+
+# Use Workers KV if needed.
