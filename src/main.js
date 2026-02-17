@@ -206,10 +206,8 @@ function renderQuestion() {
             const wrapper = document.createElement('label');
 
             let isSelected;
-
             let currentVal = state.answers[question.id];
             if (isMulti) {
-                // Multi: currentVal is array or semicolon string. Let's use array internally, convert later.
                 if (!Array.isArray(currentVal)) currentVal = currentVal ? currentVal.split(';') : [];
                 isSelected = currentVal.includes(opt.value);
             } else {
@@ -220,8 +218,8 @@ function renderQuestion() {
 
             const inputType = isMulti ? 'checkbox' : 'radio';
 
-            let innerHTML = `
-           <div class="flex items-center w-full cursror-pointer">
+            wrapper.innerHTML = `
+           <div class="flex items-center w-full cursor-pointer">
              <input type="${inputType}" name="${question.id}" value="${opt.value}" class="peer hidden" ${isSelected ? 'checked' : ''}>
              <div class="w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center mr-3 peer-checked:bg-[#FF006E] peer-checked:border-[#FF006E] transition-all">
                 <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
@@ -230,25 +228,21 @@ function renderQuestion() {
            </div>
          `;
 
-            // Helper Logic for "Anders" input
-            if (opt.hasInput) {
-                innerHTML += `
-               <div id="anders-input-${opt.value}" class="w-full mt-3 ${isSelected ? 'block' : 'hidden'} pl-9">
-                 <input type="text" placeholder="Namelijk..." class="text-input" value="${state.answers[question.id + '_anders'] || ''}">
-               </div>
-             `;
-            }
-
-            wrapper.innerHTML = innerHTML;
             optionsContainer.appendChild(wrapper);
 
             // Event Listeners
             const input = wrapper.querySelector('input');
             input.addEventListener('change', () => handleOptionChange(question, opt, input.checked, wrapper));
 
+            // "Anders" text input — OUTSIDE the label so it gets full width
             if (opt.hasInput) {
-                const textInput = wrapper.querySelector('input[type="text"]');
-                textInput.addEventListener('click', (e) => e.preventDefault()); // prevent label toggle
+                const andersContainer = document.createElement('div');
+                andersContainer.id = `anders-input-${opt.value}`;
+                andersContainer.className = `w-full mt-1 mb-2 ${isSelected ? 'block' : 'hidden'}`;
+                andersContainer.innerHTML = `<input type="text" placeholder="Namelijk..." class="text-input w-full text-base" value="${state.answers[question.id + '_anders'] || ''}">`;
+                optionsContainer.appendChild(andersContainer);
+
+                const textInput = andersContainer.querySelector('input');
                 textInput.addEventListener('input', (e) => {
                     state.answers[question.id + '_anders'] = e.target.value;
                 });
@@ -310,13 +304,12 @@ function handleOptionChange(question, option, isChecked, wrapperFn) {
         wrapperFn.classList.remove('selected', 'ring-2', 'ring-[#00B4D8]', 'ring-opacity-50');
     }
 
-    // Toggle Anders Input
+    // Toggle Anders Input (it's a sibling element, not inside the label)
     if (option.hasInput) {
-        const inputContainer = wrapperFn.querySelector(`#anders-input-${option.value}`);
+        const inputContainer = document.getElementById(`anders-input-${option.value}`);
         if (inputContainer) {
             if (isChecked) {
                 inputContainer.classList.remove('hidden');
-                // Focus logic
                 setTimeout(() => inputContainer.querySelector('input').focus(), 100);
             } else {
                 inputContainer.classList.add('hidden');
@@ -370,50 +363,49 @@ async function handleSubmit() {
     state.step = 'SUBMITTING';
     render();
 
-    // Prepare Payload
-    const payload = {
-        surveyId: state.config.surveyId,
-        version: state.config.version,
-        submittedAt: new Date().toISOString(),
-        sessionId: state.sessionId,
-        qrToken: state.token || 'NO_TOKEN',
-        meta: {
-            userAgent: navigator.userAgent,
-            lang: navigator.language
-        },
-        answersJson: JSON.stringify(state.answers)
-    };
-
-    // Flatten answers
-    state.config.questions.forEach(q => {
-        let val = state.answers[q.id];
-        if (Array.isArray(val)) val = val.join(';');
-        payload[q.id] = val || ''; // Ensure explicit empty string for Lists
-
-        // Handle anders
-        const andersVal = state.answers[q.id + '_anders'];
-        if (andersVal !== undefined) {
-            payload[q.id + '_anders'] = andersVal;
-        }
-    });
-
-    console.log('Submitting Payload:', payload);
-
-    // Honeypot (bot_check)
-    payload.bot_check = ''; // Should be empty. If filled by bot, worker rejects.
-
-    if (MOCK_MODE) {
-        // Mock specific behavior
-        await new Promise(r => setTimeout(r, 1500));
-        console.log('--- MOCK SUBMISSION SUCCESS ---');
-        console.log('Payload:', payload);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-        state.step = 'SUCCESS';
-        render();
-        return;
-    }
-
     try {
+        // Prepare Payload
+        const payload = {
+            surveyId: state.config.surveyId,
+            version: state.config.version,
+            submittedAt: new Date().toISOString(),
+            sessionId: state.sessionId,
+            qrToken: state.token || 'NO_TOKEN',
+            meta: {
+                userAgent: navigator.userAgent,
+                lang: navigator.language
+            },
+            answersJson: JSON.stringify(state.answers)
+        };
+
+        // Flatten answers
+        state.config.questions.forEach(q => {
+            let val = state.answers[q.id];
+            if (Array.isArray(val)) val = val.join(';');
+            payload[q.id] = val || '';
+
+            // Handle anders
+            const andersVal = state.answers[q.id + '_anders'];
+            if (andersVal !== undefined) {
+                payload[q.id + '_anders'] = andersVal;
+            }
+        });
+
+        // Honeypot (bot_check)
+        payload.bot_check = '';
+
+        console.log('Submitting Payload:', payload);
+
+        if (MOCK_MODE) {
+            await new Promise(r => setTimeout(r, 1000));
+            console.log('--- MOCK SUBMISSION SUCCESS ---');
+            console.log('Payload:', payload);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+            state.step = 'SUCCESS';
+            render();
+            return;
+        }
+
         const res = await fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -428,13 +420,12 @@ async function handleSubmit() {
             throw new Error(err.error || 'Server rejected');
         }
 
-        // Success
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
         state.step = 'SUCCESS';
         render();
 
     } catch (e) {
-        console.error(e);
+        console.error('Submission error:', e);
         state.step = 'ERROR';
         render();
     }

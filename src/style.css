@@ -1,75 +1,82 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ── Theme tokens (Tailwind v4 CSS-first config) ── */
+@theme {
+  --color-brand: #00B4D8;
+  --color-brand-dark: #0077B6;
+  --color-ink: #03045E;
+  --color-accent: #FF006E;
+  --color-surface: #CAF0F8;
+  --color-card: #FFFFFF;
 
+  --font-sans: 'Outfit', sans-serif;
+  --font-display: 'Fredoka', sans-serif;
+}
+
+/* ── Base ── */
 @layer base {
   body {
-    @apply font-sans antialiased text-slate-800 bg-[#E0F7FA] min-h-screen flex flex-col items-center justify-center p-4;
-    background-image: 
-      radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 20%),
-      radial-gradient(circle at 90% 80%, rgba(255, 0, 110, 0.1) 0%, transparent 20%);
+    @apply font-sans antialiased text-ink bg-surface min-h-screen;
   }
-  h1, h2, h3 {
-    @apply font-display font-bold text-slate-900;
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-bold text-ink;
   }
 }
 
+/* ── Components ── */
 @layer components {
-  /* Buttons */
   .btn-primary {
-    @apply bg-[#FF006E] text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg 
-           transform transition-all duration-200 active:scale-95 hover:bg-[#D9005B] 
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none select-none;
+    @apply bg-accent text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg transform transition-all duration-200 active:scale-95 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none select-none cursor-pointer;
   }
-  
+
   .btn-secondary {
-    @apply bg-white text-[#0077B6] border-2 border-[#0077B6] px-6 py-2 rounded-full font-semibold text-base shadow-sm 
-           transform transition-all duration-200 active:scale-95 hover:bg-slate-50 select-none;
+    @apply bg-white text-brand-dark border-2 border-brand-dark px-6 py-2 rounded-full font-semibold text-base shadow-sm transform transition-all duration-200 active:scale-95 hover:bg-slate-50 select-none cursor-pointer;
   }
 
-  /* Cards */
-  .survey-card {
-    @apply bg-white rounded-3xl shadow-xl w-full max-w-lg p-6 md:p-8 relative overflow-hidden transition-all duration-300;
-  }
-
-  /* Inputs */
   .option-card {
-    @apply border-2 border-slate-100 rounded-xl p-4 cursor-pointer transition-all duration-200 
-           hover:bg-slate-50 hover:border-slate-300 active:bg-slate-100 select-none flex items-center gap-3 relative;
+    @apply border-2 border-slate-100 rounded-xl p-4 cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:border-slate-300 active:bg-slate-100 select-none flex items-center gap-3 relative;
   }
-  
+
   .option-card.selected {
-    @apply border-[#00B4D8] bg-[#E0F7FA] shadow-sm;
-  }
-  
-  .option-card input[type="radio"],
-  .option-card input[type="checkbox"] {
-    @apply accent-[#FF006E] h-5 w-5;
+    @apply border-brand bg-surface shadow-sm;
   }
 
   .text-input {
-    @apply w-full border-2 border-slate-200 rounded-lg px-4 py-2 mt-2 focus:outline-none focus:border-[#00B4D8] transition-colors;
+    @apply w-full border-2 border-slate-200 rounded-lg px-4 py-2 mt-2 focus:outline-none focus:border-brand transition-colors;
   }
 }
 
-/* Animations */
-.fade-enter {
-  opacity: 0;
-  transform: translateY(10px);
+/* ── Custom keyframes ── */
+@keyframes blob {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
 }
-.fade-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 300ms, transform 300ms;
+
+.animate-blob {
+  animation: blob 7s infinite;
 }
-.fade-exit {
-  opacity: 1;
-  transform: translateY(0);
+
+.animation-delay-2000 {
+  animation-delay: 2s;
 }
-.fade-exit-active {
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 300ms, transform 300ms;
+
+.animation-delay-4000 {
+  animation-delay: 4s;
 }
