@@ -7,7 +7,7 @@ const MOCK_MODE = import.meta.env.VITE_MOCK_MODE === 'true';
 const API_URL = import.meta.env.VITE_API_BASE_URL || '/api/submit';
 
 let state = {
-    step: 'LOADING', // LOADING, INTRO, QUESTION, SUBMITTING, SUCCESS, ERROR
+    step: 'LOADING', // LOADING, INTRO, QUESTION, SUBMITTING, SUCCESS, ERROR, DEBUG
     questionIndex: 0,
     answers: {},
     config: null,
@@ -27,12 +27,20 @@ async function init() {
     const urlParams = new URLSearchParams(window.location.search);
     state.token = urlParams.get('t');
 
+    // Check for debug
+    if ((window.location.hash === '#debug' || urlParams.has('debug')) && MOCK_MODE) {
+        state.step = 'DEBUG';
+        render();
+        return;
+    }
+
     // Load Config
     try {
         const response = await fetch(CONFIG_URL);
         if (!response.ok) throw new Error('Kon configuratie niet laden');
         state.config = await response.json();
     } catch (error) {
+        console.error(error);
         showError('Fout bij laden enquête. Probeer het later opnieuw.');
         return;
     }
@@ -71,6 +79,9 @@ function render() {
             break;
         case 'QUESTION':
             renderQuestion();
+            break;
+        case 'DEBUG':
+            renderDebug();
             break;
         case 'SUBMITTING':
             app.innerHTML = `
@@ -194,8 +205,8 @@ function renderQuestion() {
             const isMulti = question.type === 'multi-select';
             const wrapper = document.createElement('label');
 
-            // Check if selected
-            let isSelected = false;
+            let isSelected;
+
             let currentVal = state.answers[question.id];
             if (isMulti) {
                 // Multi: currentVal is array or semicolon string. Let's use array internally, convert later.
@@ -320,7 +331,7 @@ function validateCurrentQuestion() {
     if (!question.required) return true;
 
     const answer = state.answers[question.id];
-    let isValid = false;
+    let isValid;
 
     if (question.type === 'multi-select') {
         isValid = Array.isArray(answer) && answer.length > 0;
@@ -450,3 +461,61 @@ function renderSuccess() {
 
 // Start
 init();
+
+function renderDebug() {
+    const rawData = localStorage.getItem(STORAGE_KEY);
+    let html;
+
+    if (!rawData) {
+        html = '<p class="text-slate-500 italic">Nog geen inzendingen in storage.</p>';
+    } else {
+        try {
+            const parsed = JSON.parse(rawData);
+            // Check if array or object (single object for now unless we change storing logic)
+            const list = Array.isArray(parsed) ? parsed : [parsed];
+
+            html = list.map((item, idx) => `
+                <div class="mb-8 border-b border-slate-100 pb-4 last:border-0">
+                    <h3 class="font-bold text-[#0077B6] mb-2">Inzending #${list.length - idx}</h3>
+                    <div class="bg-slate-50 p-4 rounded-lg overflow-x-auto text-xs font-mono text-slate-700 whitespace-pre-wrap leading-relaxed shadow-inner">
+                        ${JSON.stringify(item, null, 2)}
+                    </div>
+                </div>
+            `).join('');
+        } catch (e) {
+            html = `<p class="text-red-500">Ongeldige JSON in storage: ${e.message}</p>`;
+        }
+    }
+
+    app.innerHTML = `
+        <div class="w-full max-w-4xl mx-auto p-4 animate-in fade-in duration-300">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-2xl font-bold text-[#03045E]">Debug: Local Submissions</h1>
+                <button id="clear-data-btn" class="text-red-500 hover:text-red-700 text-sm font-medium px-3 py-1 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">Clear Data</button>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-lg p-6">
+                ${html}
+            </div>
+            
+            <div class="mt-8 text-center">
+                <button id="back-home-btn" class="btn-secondary">Terug naar Home</button>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('clear-data-btn').addEventListener('click', () => {
+        if (confirm('Weet je zeker dat je alle data wilt wissen?')) {
+            localStorage.removeItem(STORAGE_KEY);
+            window.location.reload();
+        }
+    });
+
+    document.getElementById('back-home-btn').addEventListener('click', () => {
+        window.location.href = window.location.pathname + window.location.search.replace(/&?debug[^&]*/g, '').replace(/\?$/, '');
+        // Or simpler
+        window.location.hash = '';
+        window.location.reload();
+    });
+}
+
