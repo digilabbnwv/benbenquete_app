@@ -448,6 +448,107 @@ function renderSuccess() {
         </div>
       </div>
     `;
+
+    // 🎉 Confetti!
+    startConfetti();
+}
+
+function startConfetti() {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'confetti-canvas';
+    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    let W, H;
+
+    function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const colors = [
+        '#FF006E', // roze/accent
+        '#00B4D8', // turquoise/brand
+        '#03045E', // donkerblauw/ink
+        '#FFD166', // goud
+        '#ADE8F4', // lichtblauw
+        '#EF476F', // koraalrood
+        '#06D6A0', // mintgroen
+        '#FFFFFF', // wit
+    ];
+
+    const particles = [];
+    const PARTICLE_COUNT = 150;
+    const DURATION = 10000; // 10 seconden
+    const startTime = Date.now();
+
+    // Maak deeltjes aan
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+            x: Math.random() * W,
+            y: Math.random() * -H,           // start boven het scherm
+            w: Math.random() * 10 + 5,        // breedte 5-15
+            h: Math.random() * 6 + 3,         // hoogte 3-9
+            color: colors[Math.floor(Math.random() * colors.length)],
+            speed: Math.random() * 3 + 2,     // val-snelheid
+            drift: Math.random() * 2 - 1,     // zijwaartse drift
+            rotation: Math.random() * 360,
+            rotationSpeed: Math.random() * 6 - 3,
+            delay: Math.random() * 3000,       // vertraging 0-3s
+            opacity: 1,
+        });
+    }
+
+    let animFrame;
+
+    function draw() {
+        const elapsed = Date.now() - startTime;
+        ctx.clearRect(0, 0, W, H);
+
+        // Na 8 seconden beginnen deeltjes te vervagen
+        const fadeStart = DURATION - 2000;
+
+        for (const p of particles) {
+            if (elapsed < p.delay) continue; // wacht op delay
+
+            p.y += p.speed;
+            p.x += p.drift + Math.sin(p.y * 0.01) * 0.5; // lichte slingering
+            p.rotation += p.rotationSpeed;
+
+            // Fade out in de laatste 2 seconden
+            if (elapsed > fadeStart) {
+                p.opacity = Math.max(0, 1 - (elapsed - fadeStart) / 2000);
+            }
+
+            // Reset als het deeltje onder het scherm valt (en we nog binnen de tijd zijn)
+            if (p.y > H + 20 && elapsed < DURATION - 2000) {
+                p.y = -20;
+                p.x = Math.random() * W;
+            }
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.globalAlpha = p.opacity;
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            ctx.restore();
+        }
+
+        if (elapsed < DURATION) {
+            animFrame = requestAnimationFrame(draw);
+        } else {
+            // Opruimen
+            cancelAnimationFrame(animFrame);
+            canvas.remove();
+            window.removeEventListener('resize', resize);
+        }
+    }
+
+    animFrame = requestAnimationFrame(draw);
 }
 
 // Start
