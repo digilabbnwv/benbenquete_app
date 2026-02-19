@@ -10,11 +10,26 @@
       "text": "Welke vestiging bezoek je?",
       "required": true,
       "options": [
-        { "value": "nunspeet", "label": "Nunspeet" },
-        { "value": "elspeet", "label": "Elspeet" },
-        { "value": "harderwijk", "label": "Harderwijk" },
-        { "value": "ermelo", "label": "Ermelo" },
-        { "value": "putten", "label": "Putten" }
+        {
+          "value": "nunspeet",
+          "label": "Nunspeet"
+        },
+        {
+          "value": "elspeet",
+          "label": "Elspeet"
+        },
+        {
+          "value": "harderwijk",
+          "label": "Harderwijk"
+        },
+        {
+          "value": "ermelo",
+          "label": "Ermelo"
+        },
+        {
+          "value": "putten",
+          "label": "Putten"
+        }
       ]
     },
     {
@@ -23,23 +38,27 @@
       "text": "Wat is voor jou de belangrijkste reden om te komen?",
       "required": true,
       "options": [
-        { "value": "voorlezen", "label": "Voorlezen is belangrijk" },
-        { "value": "leuke_activiteit", "label": "Leuke activiteit voor mij en mijn kind" },
-        { "value": "ontmoeten", "label": "Andere ouders ontmoeten" },
-        { "value": "inspiratie", "label": "Inspiratie opdoen" },
-        { "value": "anders", "label": "Anders, namelijk...", "hasInput": true }
-      ]
-    },
-    {
-      "id": "q_voorleesfrequentie",
-      "type": "single-select",
-      "text": "Hoe vaak lees je thuis voor?",
-      "required": true,
-      "options": [
-        { "value": "dagelijks", "label": "Iedere dag" },
-        { "value": "paar_keer_week", "label": "Een paar keer per week" },
-        { "value": "af_en_toe", "label": "Af en toe" },
-        { "value": "nooit", "label": "Nooit" }
+        {
+          "value": "voorlezen",
+          "label": "Ik vind voorlezen belangrijk"
+        },
+        {
+          "value": "leuke_activiteit",
+          "label": "Het is een leuke activiteit voor mijn kind"
+        },
+        {
+          "value": "ontmoeten",
+          "label": "Ik wil andere ouders ontmoeten"
+        },
+        {
+          "value": "inspiratie",
+          "label": "Ik wil inspiratie opdoen"
+        },
+        {
+          "value": "anders",
+          "label": "Anders, namelijk...",
+          "hasInput": true
+        }
       ]
     },
     {
@@ -48,13 +67,35 @@
       "text": "Wat vind je het leukst aan Boekjes & Babbels?",
       "required": true,
       "options": [
-        { "value": "voorlezen", "label": "Het voorlezen" },
-        { "value": "muziek", "label": "Het muziek maken" },
-        { "value": "spelen", "label": "Spelen met mijn kind" },
-        { "value": "kletsen", "label": "Kletsen met andere ouders" },
-        { "value": "informatie", "label": "Informatie opdoen" },
-        { "value": "lenen", "label": "Boekjes lenen" },
-        { "value": "anders", "label": "Anders, namelijk...", "hasInput": true }
+        {
+          "value": "voorlezen",
+          "label": "Het voorlezen"
+        },
+        {
+          "value": "muziek",
+          "label": "Het muziek maken"
+        },
+        {
+          "value": "spelen",
+          "label": "Spelen met mijn kind"
+        },
+        {
+          "value": "kletsen",
+          "label": "Kletsen met andere ouders"
+        },
+        {
+          "value": "informatie",
+          "label": "Informatie opdoen"
+        },
+        {
+          "value": "lenen",
+          "label": "Boekjes lenen"
+        },
+        {
+          "value": "anders",
+          "label": "Anders, namelijk...",
+          "hasInput": true
+        }
       ]
     },
     {
@@ -64,18 +105,64 @@
       "required": false
     },
     {
+      "id": "q_voorleesfrequentie",
+      "type": "single-select",
+      "text": "Hoe vaak lees je thuis voor?",
+      "required": true,
+      "options": [
+        {
+          "value": "dagelijks",
+          "label": "Iedere dag"
+        },
+        {
+          "value": "paar_keer_week",
+          "label": "Een paar keer per week"
+        },
+        {
+          "value": "af_en_toe",
+          "label": "Af en toe"
+        },
+        {
+          "value": "nooit",
+          "label": "Nooit"
+        }
+      ]
+    },
+    {
       "id": "q_andere_activiteiten",
       "type": "multi-select",
-      "text": "Naar welke andere bibliotheek-activiteiten ga je wel eens?",
+      "text": "Met welke andere bibliotheek-activiteiten ben je bekend?",
       "required": false,
       "options": [
-        { "value": "digilab", "label": "Digilab" },
-        { "value": "peuterbieb", "label": "Peuterbieb" },
-        { "value": "voorleesfeesten", "label": "Voorleesfeesten" },
-        { "value": "theatervoorstellingen", "label": "Theatervoorstellingen" },
-        { "value": "andere_beb", "label": "Andere boekjes en babbels" },
-        { "value": "avondje_uit", "label": "Avondje uit in de bieb" },
-        { "value": "anders", "label": "Anders, namelijk...", "hasInput": true }
+        {
+          "value": "digilab",
+          "label": "Digilab"
+        },
+        {
+          "value": "peuterbieb_harderwijk",
+          "label": "Peuterbieb Harderwijk"
+        },
+        {
+          "value": "voorleesfeesten",
+          "label": "Voorleesfeesten"
+        },
+        {
+          "value": "theatervoorstellingen",
+          "label": "Theatervoorstellingen"
+        },
+        {
+          "value": "andere_benb",
+          "label": "Andere boekjes en babbels"
+        },
+        {
+          "value": "avondje_uit",
+          "label": "Avondje uit in de bieb"
+        },
+        {
+          "value": "anders",
+          "label": "Anders, namelijk...",
+          "hasInput": true
+        }
       ]
     }
   ]
